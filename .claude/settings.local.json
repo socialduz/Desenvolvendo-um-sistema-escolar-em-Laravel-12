@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(php -r \"echo 'PHP: ' . PHP_VERSION . PHP_EOL; echo 'pdo_mysql loaded: ' . \\(extension_loaded\\('pdo_mysql'\\) ? 'yes' : 'no'\\) . PHP_EOL; echo 'mysqlnd: '; echo phpversion\\('mysqlnd'\\) . PHP_EOL; echo 'openssl: ' . \\(extension_loaded\\('openssl'\\) ? 'yes' : 'no'\\) . PHP_EOL;\")",
+      "PowerShell(Test-NetConnection -ComputerName roundhouse.proxy.rlwy.net -Port 11508)",
+      "PowerShell(Get-NetIPInterface -AddressFamily IPv4 | Where-Object {$_.ConnectionState -eq 'Connected'} | Select-Object InterfaceAlias, NlMtu | Format-Table -AutoSize)",
+      "PowerShell(Find-NetRoute -RemoteIPAddress 66.33.22.233)"
+    ]
+  }
+}
