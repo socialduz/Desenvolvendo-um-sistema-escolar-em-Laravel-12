@@ -4,14 +4,35 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Curso;
+
 class CursoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('curso.index');
+        $query = Curso::query();
+
+        $hasFilters = $request->filled('nome')
+            || $request->filled('descricao')
+            || $request->filled('status');
+
+        if ($request->filled('pesquisar') && $hasFilters) {
+            $query->whereLikeInsensitive('nome', $request->query('nome'))
+                ->whereLikeInsensitive('descricao', $request->query('descricao'))
+                ->when(
+                    $request->filled('status'),
+                    fn ($builder) => $builder->where('status', (int) $request->query('status'))
+                );
+        }
+
+        $cursos = $query->paginate(4)->withQueryString();
+
+        return view('curso.index', [
+            'cursos' => $cursos,
+        ]);
     }
 
     /**

@@ -8,26 +8,28 @@
             </div>
 
             <div class="col-12 my-5">
+                <form method="GET" action="{{ route('curso.index') }}">
+                <input type="hidden" name="pesquisar" value="1">
                 <div class="row">
 
                     <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-4">
                         <div class="form-group">
-                            <label for="">Nome</label>
-                            <input class="form-control" type="text" name="Curso[nome]">
+                            <label for="nome">Nome</label>
+                            <input class="form-control" type="text" name="nome" id="nome">
                         </div>
                     </div>
 
                     <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-4">
                         <div class="form-group">
-                            <label for="">Descricao</label>
-                            <input class="form-control" type="text" name="Curso[descricao]">
+                            <label for="descricao">Descricao</label>
+                            <input class="form-control" type="text" name="descricao" id="descricao">
                         </div>
                     </div>  
 
                     <div class="col-12 col-md-6 col-lg-2 col-xl-2 col-xxl-2">
                         <div class="form-group">
-                            <label for="">Status</label>
-                            <select class="form-control" name="" id="">
+                            <label for="status">Status</label>
+                            <select class="form-control" name="status" id="status">
                                 <option value="">-</option>
                                 <option value="1">Ativo</option>
                                 <option value="0">Inativo</option>
@@ -36,9 +38,13 @@
                     </div>
 
                     <div class="col-12 col-md-6 col-lg-2 col-xl-2 col-xxl-2 d-flex align-items-end mb-3">
-                        <button class="btn btn-primary mr-1">Pesquisar</button>
-                        <button class="btn btn-danger">Limpar</button>
-                    </div> <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-primary mr-1">Pesquisar</button>
+                        <a href="{{ route('curso.index') }}" class="btn btn-danger">Limpar</a>
+                    </div>
+                </div>
+                </form>
+                <div class="row">
+                    <div class="col-12 mt-4">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead> 
@@ -50,23 +56,28 @@
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody> 
+                                <tbody>
+                                    @foreach ($cursos as $curso)
                                     <tr>
-                                        <td>Curso de Matemática</td>
-                                        <td>Curso de Matemática para iniciantes</td>
-                                        <td>05/06/2026</td>
-                                        <td>Ativo</td>
+                                        <td>{{ $curso->nome }}</td>
+                                        <td>{{ $curso->descricao }}</td>
+                                        <td>{{ date('d/m/Y', strtotime($curso->dt_cadastro)) }}</td>
+                                        <td>{{ $curso->status == 1 ? 'Ativo' : 'Inativo' }}</td>
                                         <td>
-                                           <a href=""><x-bx-detail width="30" /></a>
-                                            <button class="btn btn-warning">Editar</button>
-                                            <button class="btn btn-danger">Deletar</button>
+                                            <a href="{{ route('curso.show', $curso->id) }}"><x-bx-detail width="30" /></a>
+                                            <a href="{{ route('curso.edit', $curso->id) }}"><x-bx-pencil width="30" /></a>
+                                            <a href=""><x-bx-trash width="30" class="text-danger" /></a>
                                         </td>
                                     </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
+                    <div class="col-12 mt-4 d-flex justify-content-end">
+                        {{ $cursos->links() }}
+                    </div>
                 </div>
             </div>
 
