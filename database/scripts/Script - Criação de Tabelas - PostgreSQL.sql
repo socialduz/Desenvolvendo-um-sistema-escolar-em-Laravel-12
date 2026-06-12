@@ -161,7 +161,8 @@ create table disciplina
 create table tipo_conteudo
 (
     id serial primary key,
-    tipo varchar(100) not null
+    tipo varchar(100) not null,
+    status int not null default 1
 );
 
 create table conteudo

@@ -63,10 +63,8 @@
                                         <td>{{ $curso->descricao }}</td>
                                         <td>{{ date('d/m/Y', strtotime($curso->dt_cadastro)) }}</td>
                                         <td>{{ $curso->status == 1 ? 'Ativo' : 'Inativo' }}</td>
-                                        <td>
-                                            <a href="{{ route('curso.show', $curso->id) }}"><x-bx-detail width="30" /></a>
-                                            <a href="{{ route('curso.edit', $curso->id) }}"><x-bx-pencil width="30" /></a>
-                                            <a href=""><x-bx-trash width="30" class="text-danger" /></a>
+                                        <td class="text-nowrap">
+                                            @include('curso._acoes', ['curso' => $curso])
                                         </td>
                                     </tr>
                                     @endforeach
