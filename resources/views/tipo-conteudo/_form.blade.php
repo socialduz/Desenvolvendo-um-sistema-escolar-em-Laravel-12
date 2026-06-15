@@ -12,7 +12,7 @@
                 required
             >
             @error('tipo')
-                <div class="invalid-feedback">{{ $message }}</div>
+                <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
         </div>
     </div>
@@ -25,7 +25,7 @@
                 <option value="0" @selected(old('status', $tipoConteudo->status ?? 1) == 0)>Inativo</option>
             </select>
             @error('status')
-                <div class="invalid-feedback">{{ $message }}</div>
+                <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
         </div>
     </div>

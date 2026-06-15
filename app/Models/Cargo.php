@@ -3,16 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class TipoConteudo extends Model
+class Cargo extends Model
 {
-    protected $table = 'tipo_conteudo';
+    protected $table = 'cargo';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'tipo',
+        'descricao',
+        'titulo',
         'status',
     ];
 
@@ -49,7 +49,7 @@ class TipoConteudo extends Model
         $hoje = now()->toDateString();
 
         $registro = new static;
-        $registro->fill(collect($dados)->only(['tipo', 'status'])->all());
+        $registro->fill(collect($dados)->only(['descricao', 'titulo', 'status'])->all());
         $registro->dt_create = $hoje;
         $registro->dt_update = $hoje;
         $registro->save();
@@ -59,14 +59,9 @@ class TipoConteudo extends Model
 
     public function atualizarPorUsuario(array $dados): bool
     {
-        $this->fill(collect($dados)->only(['tipo', 'status'])->all());
+        $this->fill(collect($dados)->only(['descricao', 'titulo', 'status'])->all());
         $this->dt_update = now()->toDateString();
 
         return $this->save();
-    }
-
-    public function conteudos(): HasMany
-    {
-        return $this->hasMany(Conteudo::class, 'id_tipo', 'id');
     }
 }

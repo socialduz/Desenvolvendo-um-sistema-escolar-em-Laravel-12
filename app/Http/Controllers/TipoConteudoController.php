@@ -75,8 +75,20 @@ class TipoConteudoController extends Controller
 
     public function show(TipoConteudo $tipoConteudo): View
     {
+        $tipoConteudo->load([
+            'conteudos' => fn ($query) => $query->with('disciplina')->orderBy('titulo'),
+        ]);
+
+        $disciplinas = $tipoConteudo->conteudos
+            ->pluck('disciplina')
+            ->filter()
+            ->unique('id')
+            ->sortBy('nome')
+            ->values();
+
         return view('tipo-conteudo.show', [
             'tipoConteudo' => $tipoConteudo,
+            'disciplinas' => $disciplinas,
         ]);
     }
 

@@ -15,6 +15,14 @@
 <script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
 
 <script>
+    document.addEventListener('invalid', function (event) {
+        event.target.setCustomValidity('Preencha este campo.');
+    }, true);
+
+    document.addEventListener('input', function (event) {
+        event.target.setCustomValidity('');
+    }, true);
+
     document.addEventListener('submit', function (event) {
         var form = event.target;
 
