@@ -8,6 +8,8 @@
             </div>
 
             <div class="col-12 my-5">
+                <x-alert :alerta="$alerta ?? null" />
+
                 <form method="GET" action="{{ route('curso.index') }}">
                 <input type="hidden" name="pesquisar" value="1">
                 <div class="row">

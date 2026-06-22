@@ -163,4 +163,27 @@ class DisciplinaController extends Controller
                 ]);
         }
     }
+
+    public function destroyConteudo(Conteudo $conteudo): RedirectResponse
+    {
+        $disciplinaId = $conteudo->id_disciplina;
+
+        try {
+            $conteudo->delete();
+
+            return redirect()
+                ->route('disciplina.conteudos', $disciplinaId)
+                ->with('alerta', [
+                    'tipo' => 'success',
+                    'mensagem' => 'Conteúdo deletado com sucesso.',
+                ]);
+        } catch (Throwable) {
+            return redirect()
+                ->route('disciplina.conteudos', $disciplinaId)
+                ->with('alerta', [
+                    'tipo' => 'danger',
+                    'mensagem' => 'Não foi possível excluir o conteúdo. Tente novamente.',
+                ]);
+        }
+    }
 }

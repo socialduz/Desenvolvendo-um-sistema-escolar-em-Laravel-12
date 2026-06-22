@@ -7,6 +7,10 @@
         <x-bx-pencil width="14" height="14" />
     </a>
 
+    <a href="{{ route('curso.disciplinas', $curso->id) }}" class="btn btn-sm btn-success p-1 mr-1" title="Disciplinas">
+        <x-bx-book width="14" height="14" />
+    </a>
+
     <form action="{{ route('curso.destroy', $curso->id) }}" method="POST" class="d-inline mb-0" data-confirm-delete>
         @csrf
         @method('DELETE')

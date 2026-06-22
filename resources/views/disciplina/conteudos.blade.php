@@ -184,6 +184,15 @@
                                                         <span class="d-block text-muted">{{ $conteudo->observacao ?: '-' }}</span>
                                                     </div>
                                                 </div>
+                                                <div class="d-flex justify-content-end mt-2">
+                                                    <form action="{{ route('disciplina.destroy-conteudo', $conteudo->id) }}" method="POST" class="d-inline mb-0" data-confirm-delete>
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger p-1" title="Excluir">
+                                                            <x-bx-trash width="14" height="14" />
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
