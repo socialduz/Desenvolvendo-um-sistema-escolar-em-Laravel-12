@@ -6,6 +6,7 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\TipoConteudoController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\DisciplinaController;
+use App\Http\Controllers\EscolaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,3 +24,4 @@ Route::get('disciplina/{disciplina}/conteudos', [DisciplinaController::class, 'c
 Route::post('disciplina/add-conteudos', [DisciplinaController::class, 'addConteudos'])->name('disciplina.add-conteudos');
 Route::delete('disciplina/conteudo/{conteudo}', [DisciplinaController::class, 'destroyConteudo'])->name('disciplina.destroy-conteudo');
 Route::resource('disciplina', DisciplinaController::class)->except(['destroy']);
+Route::resource('escola', EscolaController::class);

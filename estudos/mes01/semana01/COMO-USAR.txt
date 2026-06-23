@@ -1,0 +1,27 @@
+MÊS 1 — SEMANA 1
+================
+
+1. Abra o terminal na pasta:
+   Desenvolvendo-um-sistema-escolar-em-Laravel-12\estudos\mes01\semana01
+
+2. Execute:
+   php exercicios.php
+
+3. Edite exercicios.php no Cursor e preencha cada bloco TODO.
+
+4. Rode de novo até a saída fazer sentido.
+
+CRONOGRAMA (plano de estudo)
+-----------------------------
+Segunda  : teoria — Curso em Vídeo PHP (variáveis, if/else)
+Terça    : exercícios 1 a 5
+Quarta   : exercícios 6 a 10
+Quinta   : explorar pastas do Laravel (app, routes, resources, database, public)
+Sexta    : revisão PHP + 3 perguntas ao Cursor (modo Ask)
+
+CHECKLIST
+---------
+[ ] Exercícios 1–5 funcionando
+[ ] Exercícios 6–10 funcionando
+[ ] php exercicios.php roda sem erro de sintaxe
+[ ] Anotei 5 pastas do Laravel (quinta/sexta)
