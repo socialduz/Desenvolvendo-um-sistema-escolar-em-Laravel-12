@@ -40,7 +40,7 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <x-modal/>
+   
 
     <x-script/>
     

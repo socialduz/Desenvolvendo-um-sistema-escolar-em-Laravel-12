@@ -2,7 +2,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -14,7 +14,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="/">
+            <a class="nav-link" href="{{ route('dashboard') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -58,6 +58,27 @@
                 <a class="nav-link" href="{{ route('escola.index') }}">
                     <i class="fas fa-fw fa-school"></i>
                     <span>Escola</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('usuario.index') }}">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Usuários</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('cargo.index') }}">
+                    <i class="fas fa-fw fa-id-badge"></i>
+                    <span>Cargos</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('administrativo.index') }}">
+                    <i class="fas fa-fw fa-user-tie"></i>
+                    <span>Administrativo</span>
                 </a>
             </li>
 
