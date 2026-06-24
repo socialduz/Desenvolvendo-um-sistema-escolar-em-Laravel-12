@@ -11,7 +11,8 @@
 
 @if ($errors->any())
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <ul class="mb-0">
+    <strong>Existem campos obrigatórios não preenchidos.</strong>
+    <ul class="mb-0 mt-2">
         @foreach ($errors->all() as $erro)
             <li>{{ $erro }}</li>
         @endforeach

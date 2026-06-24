@@ -51,6 +51,21 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
+                Gestão de Escola
+            </div>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('escola.index') }}">
+                    <i class="fas fa-fw fa-school"></i>
+                    <span>Escola</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
             Gestão de Pessoas
             </div>
 
@@ -64,7 +79,6 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Módulos:</h6>
-                        <a class="collapse-item" href="#">Escola</a>
                         <a class="collapse-item" href="#">Alunos</a>
                         <a class="collapse-item" href="#">Professores</a>
                     </div>
