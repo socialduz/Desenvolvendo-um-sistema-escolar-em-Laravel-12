@@ -107,35 +107,56 @@ class ProfessorController extends Controller
         ]);
     }
     public function update(ProfessorRequest $request, Professor $professor): RedirectResponse
-{
-    try {
-        $professor->update([
-            'id_usuario' => $request->id_usuario,
-            'id_escola' => $request->id_escola,
-            'registro' => $request->registro,
-            'salario' => $request->salario,
-            'status' => $request->status ?? 1,
-            'telefone' => $request->telefone,
-            'observacao' => $request->observacao,
-            'data_cadastro' => $request->data_cadastro,
-        ]);
+    {
+        try {
+            $professor->update([
+                'id_usuario' => $request->id_usuario,
+                'id_escola' => $request->id_escola,
+                'registro' => $request->registro,
+                'salario' => $request->salario,
+                'status' => $request->status ?? 1,
+                'telefone' => $request->telefone,
+                'observacao' => $request->observacao,
+                'data_cadastro' => $request->data_cadastro,
+            ]);
 
-        return redirect()
-            ->route('professor.index')
-            ->with('alerta', [
-                'tipo' => 'success',
-                'mensagem' => 'Professor atualizado com sucesso.',
-            ]);
-    } catch (Throwable) {
-        return redirect()
-            ->route('professor.edit', $professor)
-            ->withInput()
-            ->with('alerta', [
-                'tipo' => 'danger',
-                'mensagem' => 'Não foi possível atualizar o professor. Tente novamente.',
-            ]);
+            return redirect()
+                ->route('professor.index')
+                ->with('alerta', [
+                    'tipo' => 'success',
+                    'mensagem' => 'Professor atualizado com sucesso.',
+                ]);
+        } catch (Throwable) {
+            return redirect()
+                ->route('professor.edit', $professor)
+                ->withInput()
+                ->with('alerta', [
+                    'tipo' => 'danger',
+                    'mensagem' => 'Não foi possível atualizar o professor. Tente novamente.',
+                ]);
+        }
     }
-}
+
+    public function destroy(Professor $professor): RedirectResponse
+    {
+        try {
+            $professor->delete();
+
+            return redirect()
+                ->route('professor.index')
+                ->with('alerta', [
+                    'tipo' => 'success',
+                    'mensagem' => 'Professor excluído com sucesso.',
+                ]);
+        } catch (Throwable) {
+            return redirect()
+                ->back()
+                ->with('alerta', [
+                    'tipo' => 'danger',
+                    'mensagem' => 'Não foi possível excluir o professor. Tente novamente.',
+                ]);
+        }
+    }
 }
 
 

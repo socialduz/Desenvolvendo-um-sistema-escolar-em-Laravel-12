@@ -87,28 +87,24 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-            Gestão de Pessoas
+                Gestão de Pessoas
             </div>
 
-            <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>Pessoas</span>
+                <a class="nav-link" href="{{ route('professor.index') }}">
+                    <i class="fas fa-fw fa-chalkboard-teacher"></i>
+                    <span>Professores</span>
                 </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Módulos:</h6>
-                        <a class="collapse-item" href="#">Alunos</a>
-                        <a class="collapse-item" href="#">Professores</a>
-                    </div>
-                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('turma.index') }}">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Turmas</span>
+                </a>
             </li>
 
            
-
-            
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
