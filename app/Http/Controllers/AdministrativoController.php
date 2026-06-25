@@ -150,8 +150,24 @@ class AdministrativoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Administrativo $administrativo)
+    public function destroy(Administrativo $administrativo): RedirectResponse
     {
-        //
+        try {
+            $administrativo->delete();
+
+            return redirect()
+                ->route('administrativo.index')
+                ->with('alerta', [
+                    'tipo' => 'success',
+                    'mensagem' => 'Administrativo excluído com sucesso.',
+                ]);
+        } catch (Throwable) {
+            return redirect()
+                ->back()
+                ->with('alerta', [
+                    'tipo' => 'danger',
+                    'mensagem' => 'Não foi possível excluir o administrativo. Tente novamente.',
+                ]);
+        }
     }
 }

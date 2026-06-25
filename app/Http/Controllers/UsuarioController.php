@@ -139,8 +139,24 @@ class UsuarioController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $usuario): RedirectResponse
     {
-        //
+        try {
+            $usuario->delete();
+
+            return redirect()
+                ->route('usuario.index')
+                ->with('alerta', [
+                    'tipo' => 'success',
+                    'mensagem' => 'Usuário excluído com sucesso.',
+                ]);
+        } catch (Throwable) {
+            return redirect()
+                ->back()
+                ->with('alerta', [
+                    'tipo' => 'danger',
+                    'mensagem' => 'Não foi possível excluir o usuário. Tente novamente.',
+                ]);
+        }
     }
 }

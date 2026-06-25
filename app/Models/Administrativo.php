@@ -9,7 +9,6 @@ class Administrativo extends Model
 {
     protected $table = 'administrativo';
 
-  
 
     protected $fillable = [
         'id_usuario',
