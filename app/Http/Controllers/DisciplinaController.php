@@ -16,36 +16,17 @@ class DisciplinaController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Disciplina::query()->orderBy('nome');
+        $nome = $request->query('nome');
+        $descricao = $request->query('descricao');
+        $status = filled($request->query('status')) ? [$request->query('status')] : [0, 1];
 
-        $hasFilters = $request->filled('nome')
-            || $request->filled('descricao')
-            || $request->filled('status');
+        $disciplinas = Disciplina::query()
+            ->where('nome', 'LIKE', '%'.$nome.'%')
+            ->where('descricao', 'LIKE', '%'.$descricao.'%')
+            ->whereIn('status', $status)
+            ->paginate(6);
 
-        if ($request->filled('pesquisar') && $hasFilters) {
-            $query->whereLikeInsensitive('nome', $request->query('nome'))
-                ->whereLikeInsensitive('descricao', $request->query('descricao'))
-                ->when(
-                    $request->filled('status'),
-                    fn ($builder) => $builder->where('status', (int) $request->query('status'))
-                );
-        }
-
-        $disciplinas = $query->paginate(4)->withQueryString();
-
-        $alerta = session('alerta');
-
-        if ($request->filled('pesquisar') && $hasFilters && $disciplinas->total() === 0) {
-            $alerta = [
-                'tipo' => 'warning',
-                'mensagem' => 'Disciplina não encontrada',
-            ];
-        }
-
-        return view('disciplina.index', [
-            'disciplinas' => $disciplinas,
-            'alerta' => $alerta,
-        ]);
+        return view('disciplina.index', compact('disciplinas'));
     }
 
     public function create(): View

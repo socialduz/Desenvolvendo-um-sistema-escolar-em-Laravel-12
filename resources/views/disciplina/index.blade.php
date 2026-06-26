@@ -2,88 +2,105 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12 d-flex justify-content-between align-items-end border-bottom border-secondary py-3">
-                <h3 class="my-0"><span class="font-weight-bold">Disciplina</span>-Listar Disciplinas</h3>
+
+            <div class="col-12 d-flex justify-content-between 
+                        align-items-end border-bottom border-secondary py-3">
+
+                <h3 class="my-0"> <span class="font-weight-bold"> Disciplina </span> - Listar Disciplina</h3>
                 <a class="btn btn-primary" href="{{ route('disciplina.create') }}">Cadastrar Disciplina</a>
+
             </div>
 
-            <div class="col-12 my-5">
-                <x-alert :alerta="$alerta" />
+            @include('components.pesquisa-alertas')
 
-                <form method="GET" action="{{ route('disciplina.index') }}">
-                    <input type="hidden" name="pesquisar" value="1">
-                    <div class="row align-items-end mb-3">
-                        <div class="col-12 col-md-4 col-lg-4">
-                            <div class="form-group mb-0">
-                                <label for="nome">Nome</label>
-                                <input class="form-control" type="text" name="nome" id="nome">
-                            </div>
-                        </div>
+            <div class="col-12 my-3">
 
-                        <div class="col-12 col-md-4 col-lg-4">
-                            <div class="form-group mb-0">
-                                <label for="descricao">Descrição</label>
-                                <input class="form-control" type="text" name="descricao" id="descricao">
-                            </div>
-                        </div>
+                <form class="row" action="{{ route('disciplina.index') }}" method="get">
 
-                        <div class="col-12 col-md-2 col-lg-2">
-                            <div class="form-group mb-0">
-                                <label for="status">Status</label>
-                                <select class="form-control" name="status" id="status">
-                                    <option value="">-</option>
-                                    <option value="1">Ativo</option>
-                                    <option value="0">Inativo</option>
-                                </select>
-                            </div>
-                        </div>
+                    <div class="col-12 col-md-6 col-lg-3 col-xl-3 col-xxl-3">
 
-                        <div class="col-12 col-md-2 col-lg-2 d-flex">
-                            <button type="submit" class="btn btn-primary mr-1">Pesquisar</button>
-                            <a href="{{ route('disciplina.index') }}" class="btn btn-danger">Limpar</a>
+                        <div class="form-group m-0">
+                            <label for="">Nome</label>
+                            <input class="form-control" type="text" name="nome" 
+                              value="{{ request()->query("nome") }}">
                         </div>
+                    
                     </div>
+
+                    <div class="col-12 col-md-6 col-lg-3 col-xl-3 col-xxl-3">
+
+                        <div class="form-group m-0">
+                            <label for="">Descrição</label>
+                            <input class="form-control" type="text" name="descricao" 
+                              value="{{ request()->query("descricao") }}">
+                        </div>
+                    
+                    </div>
+
+                    <div class="col-12 col-lg-2 col-xl-2 col-xxl-2">
+
+                        <div class="form-group m-0">
+                            <label for="">Status</label>
+                            <select class="form-control" name="status" id="">
+                                <option value="" @selected(! filled(request()->query('status')))>-</option>
+                                <option value="1" @selected(request()->query('status') == 1)>Ativo</option>
+                                <option value="0" @selected(request()->query('status') === '0' || request()->query('status') === 0)>Inativo</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="col-12 col-lg-2 col-xl-2 col-xxl-2 d-flex align-items-end">
+
+                        <button class="btn btn-primary mr-1">Pesquisar</button>
+                        <a href="{{ route('disciplina.index') }}" class="btn btn-danger">Limpar</a>
+
+                    </div>
+
                 </form>
 
-                <div class="row">
-                    <div class="col-12 mt-4">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Descrição</th>
-                                        <th>Status</th>
-                                        <th>Data de cadastro</th>
-                                        <th>Data de criação</th>
-                                        <th>Última alteração</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($disciplinas as $disciplina)
+            </div>
+
+            <div class="col-12 my-3">
+                <div class="table-responsive">
+
+                    <table class="table table-striped table-hover">
+
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                                @foreach ($disciplinas as $key => $disciplina)
                                     <tr>
                                         <td>{{ $disciplina->nome }}</td>
-                                        <td>{{ \Illuminate\Support\Str::limit($disciplina->descricao, 50) }}</td>
-                                        <td>{{ (int) $disciplina->status === 1 ? 'Ativo' : 'Inativo' }}</td>
-                                        <td>{{ $disciplina->dt_cadastro ? date('d/m/Y', strtotime($disciplina->dt_cadastro)) : '-' }}</td>
-                                        <td>{{ $disciplina->dt_create ? date('d/m/Y', strtotime($disciplina->dt_create)) : '-' }}</td>
-                                        <td>{{ $disciplina->dt_update ? date('d/m/Y', strtotime($disciplina->dt_update)) : '-' }}</td>
-                                        <td class="text-nowrap">
-                                            @include('disciplina._acoes', ['disciplina' => $disciplina])
+                                        <td>{{ $disciplina->descricao }}</td>
+                                        <td>{{ $disciplina->status == 1  ? "Ativo" : "Inativo" }}</td>
+                                        <td>
+                                            <a href="{{ route('disciplina.show',$disciplina->id)}}"><x-bx-detail width="30"/></a>
+                                            <a href="{{ route('disciplina.edit', $disciplina->id)}}"><x-bx-pencil width="30" /></a>
+                                            <a href="{{ route('disciplina.conteudos', $disciplina->id)}}"><x-bx-book width="30" /></a>
                                         </td>
                                     </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
 
-                    <div class="col-12 mt-4 d-flex justify-content-end">
-                        {{ $disciplinas->links() }}
-                    </div>
+                                @endforeach
+                        </tbody>
+
+                    </table>
+
                 </div>
+
+                <div>
+                    {{ $disciplinas->links() }}
+                </div>
+
             </div>
+
         </div>
     </div>
 

@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('disciplina/conteudo/{conteudo}', [DisciplinaController::class, 'destroyConteudo'])->name('disciplina.destroy-conteudo');
     Route::resource('disciplina', DisciplinaController::class)->except(['destroy']);
     Route::resource('escola', EscolaController::class);
+    Route::get('usuario/cursos/{id}', [UsuarioController::class, 'cursos'])->name('usuario.cursos');
+    Route::get('usuario/concluir/{id_aluno}/{id_curso}/{id_disciplina}', [UsuarioController::class, 'concluirDisciplina'])->name('concluir-disciplina');
     Route::resource('usuario', UsuarioController::class);
     Route::resource('administrativo', AdministrativoController::class);
     Route::resource('professor', ProfessorController::class);
@@ -47,6 +49,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('turma/{turma}/alunos', [TurmaController::class, 'alunos'])->name('turma.alunos');
     Route::post('turma/add-alunos', [TurmaController::class, 'addAlunos'])->name('turma.ad-alunos');
+    Route::put('turma/atualiza-nota/{id}', [TurmaController::class, 'atualizaNota'])->name('turma.atualiza-nota');
+
     Route::resource('turma', TurmaController::class);
 
     });

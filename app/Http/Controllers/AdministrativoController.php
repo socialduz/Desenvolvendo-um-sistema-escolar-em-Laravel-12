@@ -19,44 +19,26 @@ class AdministrativoController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Administrativo::query()
+        $nome = $request->query('nome');
+        $escola = $request->query('escola');
+        $cargo = $request->query('cargo');
+
+        $administrativos = Administrativo::query()
             ->with(['usuario', 'escola', 'cargo'])
-            ->orderBy('id');
-
-        $hasFilters = $request->filled('id_usuario')
-            || $request->filled('id_escola')
-            || $request->filled('id_cargo');
-
-        if ($request->filled('pesquisar') && $hasFilters) {
-            $query->when(
-                $request->filled('id_usuario'),
-                fn ($builder) => $builder->where('id_usuario', (int) $request->query('id_usuario'))
-            )->when(
-                $request->filled('id_escola'),
-                fn ($builder) => $builder->where('id_escola', (int) $request->query('id_escola'))
-            )->when(
-                $request->filled('id_cargo'),
-                fn ($builder) => $builder->where('id_cargo', (int) $request->query('id_cargo'))
-            );
-        }
-
-        $administrativos = $query->paginate(5)->withQueryString();
-
-        $alerta = session('alerta');
-
-        if ($request->filled('pesquisar') && $hasFilters && $administrativos->total() === 0) {
-            $alerta = [
-                'tipo' => 'warning',
-                'mensagem' => 'Administrativo não encontrado',
-            ];
-        }
+            ->when(filled($nome), function ($query) use ($nome) {
+                $query->whereHas('usuario', fn ($q) => $q->whereLikeInsensitive('name', $nome));
+            })
+            ->when(filled($escola), function ($query) use ($escola) {
+                $query->whereHas('escola', fn ($q) => $q->whereLikeInsensitive('razao_social', $escola));
+            })
+            ->when(filled($cargo), function ($query) use ($cargo) {
+                $query->whereHas('cargo', fn ($q) => $q->whereLikeInsensitive('titulo', $cargo));
+            })
+            ->paginate(6)
+            ->withQueryString();
 
         return view('administrativo.index', [
             'administrativos' => $administrativos,
-            'usuarios' => User::query()->orderBy('name')->get(),
-            'escolas' => Escola::query()->orderBy('razao_social')->get(),
-            'cargos' => Cargo::query()->orderBy('titulo')->get(),
-            'alerta' => $alerta,
         ]);
     }
 

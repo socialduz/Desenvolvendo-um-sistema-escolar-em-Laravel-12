@@ -14,36 +14,25 @@ class CargoController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Cargo::query()->orderBy('titulo');
+        $titulo = $request->query('titulo');
+        $descricao = $request->query('descricao');
+        $status = filled($request->query('status')) ? [$request->query('status')] : [0, 1];
 
-        $hasFilters = $request->filled('titulo')
-            || $request->filled('descricao')
-            || $request->filled('status');
+        $cargos = Cargo::query()
+            ->whereLikeInsensitive('titulo', $titulo)
+            ->when(filled($descricao), function ($query) use ($descricao) {
+                $query->where(function ($q) use ($descricao) {
+                    $q->whereLikeInsensitive('descricao', $descricao)
+                        ->orWhere(function ($q2) use ($descricao) {
+                            $q2->whereLikeInsensitive('titulo', $descricao);
+                        });
+                });
+            })
+            ->whereIn('status', $status)
+            ->paginate(6)
+            ->withQueryString();
 
-        if ($request->filled('pesquisar') && $hasFilters) {
-            $query->whereLikeInsensitive('titulo', $request->query('titulo'))
-                ->whereLikeInsensitive('descricao', $request->query('descricao'))
-                ->when(
-                    $request->filled('status'),
-                    fn ($builder) => $builder->where('status', (int) $request->query('status'))
-                );
-        }
-
-        $cargos = $query->paginate(4)->withQueryString();
-
-        $alerta = session('alerta');
-
-        if ($request->filled('pesquisar') && $hasFilters && $cargos->total() === 0) {
-            $alerta = [
-                'tipo' => 'warning',
-                'mensagem' => 'Cargo não encontrado',
-            ];
-        }
-
-        return view('cargo.index', [
-            'cargos' => $cargos,
-            'alerta' => $alerta,
-        ]);
+        return view('cargo.index', compact('cargos'));
     }
 
     public function create(): View

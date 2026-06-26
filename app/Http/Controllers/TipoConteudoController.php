@@ -13,33 +13,15 @@ class TipoConteudoController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = TipoConteudo::query()->orderBy('tipo');
+        $tipo = $request->query('tipo');
+        $status = filled($request->query('status')) ? [$request->query('status')] : [0, 1];
 
-        $hasFilters = $request->filled('tipo') || $request->filled('status');
+        $tipos = TipoConteudo::query()
+            ->whereLikeInsensitive('tipo', $tipo)
+            ->whereIn('status', $status)
+            ->paginate(6);
 
-        if ($request->filled('pesquisar') && $hasFilters) {
-            $query->whereLikeInsensitive('tipo', $request->query('tipo'))
-                ->when(
-                    $request->filled('status'),
-                    fn ($builder) => $builder->where('status', (int) $request->query('status'))
-                );
-        }
-
-        $tipos = $query->paginate(4)->withQueryString();
-
-        $alerta = session('alerta');
-
-        if ($request->filled('pesquisar') && $hasFilters && $tipos->total() === 0) {
-            $alerta = [
-                'tipo' => 'warning',
-                'mensagem' => 'Tipo de conteúdo não encontrado',
-            ];
-        }
-
-        return view('tipo-conteudo.index', [
-            'tipos' => $tipos,
-            'alerta' => $alerta,
-        ]);
+        return view('tipo-conteudo.index', compact('tipos'));
     }
 
     public function create(): View

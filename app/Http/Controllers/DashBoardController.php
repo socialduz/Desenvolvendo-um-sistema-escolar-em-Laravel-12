@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Curso;
+use App\Models\Escola;
+use App\Models\Professor;
+use App\Models\Turma;
+use Illuminate\View\View;
 
 class DashBoardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): View
     {
-        return view('dashboard.index');
+        $contadorEscola = Escola::count();
+        $contadorCurso = Curso::count();
+        $contadorTurma = Turma::count();
+        $contadorProfessor = Professor::count();
+
+        return view('dashboard.index', compact(
+            'contadorEscola',
+            'contadorCurso',
+            'contadorTurma',
+            'contadorProfessor'
+        ));
     }
-
 }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-  

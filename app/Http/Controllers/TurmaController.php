@@ -27,44 +27,32 @@ class TurmaController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request): View
-{
-    $query = Turma::query()
-        ->with(['escola', 'professor.usuario'])
-        ->orderBy('id');
+    {
+        $id_escola = $request->query('id_escola');
+        $id_professor = $request->query('id_professor');
+        $codigo = $request->query('nome');
 
-    $hasFilters = $request->filled('nome')
-        || $request->filled('id_escola')
-        || $request->filled('id_professor');
+        $escolas = Escola::query()->get();
+        $professores = Professor::query()->get();
 
-    if ($request->filled('pesquisar') && $hasFilters) {
-        $query->whereLikeInsensitive('nome', $request->query('nome'))
-            ->when(
-                $request->filled('id_escola'),
-                fn ($builder) => $builder->where('id_escola', (int) $request->query('id_escola'))
-            )->when(
-                $request->filled('id_professor'),
-                fn ($builder) => $builder->where('id_professor', (int) $request->query('id_professor'))
-            );
+        $turmas = Turma::query()
+            ->with(['escola', 'professor.usuario'])
+            ->when(filled($id_professor), function ($query) use ($id_professor) {
+                return $query->where('id_professor', $id_professor);
+            })
+            ->when(filled($id_escola), function ($query) use ($id_escola) {
+                return $query->where('id_escola', $id_escola);
+            })
+            ->whereLikeInsensitive('nome', $codigo)
+            ->paginate(6)
+            ->withQueryString();
+
+        return view('turma.index', [
+            'turmas' => $turmas,
+            'escolas' => $escolas,
+            'professores' => $professores,
+        ]);
     }
-
-    $turmas = $query->paginate(6)->withQueryString();
-
-    $alerta = session('alerta');
-
-    if ($request->filled('pesquisar') && $hasFilters && $turmas->total() === 0) {
-        $alerta = [
-            'tipo' => 'warning',
-            'mensagem' => 'Turma não encontrada',
-        ];
-    }
-
-    return view('turma.index', [
-        'turmas' => $turmas,
-        'escolas' => Escola::query()->orderBy('razao_social')->get(),
-        'professores' => Professor::query()->with('usuario')->orderBy('id')->get(),
-        'alerta' => $alerta,
-    ]);
-}
 
     /**
      * Show the form for creating a new resource.
@@ -117,8 +105,16 @@ class TurmaController extends Controller
      */
     public function show(Turma $turma): View
     {
+        $cursosJaVinculados = DB::table('turma_curso')
+            ->select('curso.id', 'curso.nome', 'curso.descricao')
+            ->join('curso', 'curso.id', '=', 'turma_curso.id_curso')
+            ->join('turma', 'turma.id', '=', 'turma_curso.id_turma')
+            ->where('turma.id', $turma->id)
+            ->get();
+
         return view('turma.show', [
             'turma' => $turma->load(['escola', 'professor']),
+            'cursosJaVinculados' => $cursosJaVinculados,
         ]);
     }
 
@@ -260,7 +256,7 @@ class TurmaController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('turma.index')
+                ->route('turma.cursos', $idTurma)
                 ->with('alerta', [
                     'tipo' => 'success',
                     'mensagem' => 'Cursos atualizados com sucesso.',
@@ -269,7 +265,7 @@ class TurmaController extends Controller
             DB::rollBack();
 
             return redirect()
-                ->route('turma.index')
+                ->route('turma.cursos', $idTurma)
                 ->with('alerta', [
                     'tipo' => 'danger',
                     'mensagem' => 'Não foi possível atualizar os cursos.',
@@ -350,33 +346,28 @@ class TurmaController extends Controller
             }
 
             foreach ($alunoRequest as $vaiAdicionar) {
-                if (! in_array($vaiAdicionar, $alunosAdicionados)) {
-                    $aluno = Aluno::query()
-                        ->where('id_usuario', $vaiAdicionar)
-                        ->first();
+                $aluno = Aluno::query()
+                    ->where('id_usuario', $vaiAdicionar)
+                    ->first();
 
-                    if (! $aluno) {
-                        $aluno = Aluno::query()->create([
-                            'id_usuario' => $vaiAdicionar,
-                            'id_escola' => $turma->id_escola,
-                            'registro' => 'Aluno'.$vaiAdicionar,
-                        ]);
-                    }
+                if (! $aluno) {
+                    $aluno = Aluno::query()->create([
+                        'id_usuario' => $vaiAdicionar,
+                        'id_escola' => $turma->id_escola,
+                        'registro' => 'ALUN'.$vaiAdicionar,
+                    ]);
+                }
 
+                $vinculoExiste = AlunoTurma::query()
+                    ->where('id_turma', $idTurma)
+                    ->where('id_aluno', $aluno->id)
+                    ->exists();
+
+                if (! $vinculoExiste) {
                     AlunoTurma::query()->create([
                         'id_turma' => $idTurma,
                         'id_aluno' => $aluno->id,
                     ]);
-                }
-            }
-
-            foreach ($alunoRequest as $idUsuario) {
-                $aluno = Aluno::query()
-                    ->where('id_usuario', $idUsuario)
-                    ->first();
-
-                if (! $aluno) {
-                    continue;
                 }
 
                 $cursosTurma = TurmaCurso::query()
@@ -387,7 +378,7 @@ class TurmaController extends Controller
                     $temCurso = AlunoCurso::query()
                         ->where('id_aluno', $aluno->id)
                         ->where('id_curso', $cursoTurma->id_curso)
-                        ->first();
+                        ->exists();
 
                     if (! $temCurso) {
                         AlunoCurso::query()->create([
@@ -406,7 +397,7 @@ class TurmaController extends Controller
                         $temDisciplina = AlunoDisciplina::query()
                             ->where('id_aluno', $aluno->id)
                             ->where('id_disciplina', $disciplinaCurso->id_disciplina)
-                            ->first();
+                            ->exists();
 
                         if (! $temDisciplina) {
                             AlunoDisciplina::query()->create([
@@ -422,7 +413,7 @@ class TurmaController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('turma.index')
+                ->route('turma.alunos', $idTurma)
                 ->with('alerta', [
                     'tipo' => 'success',
                     'mensagem' => 'Alunos atualizados com sucesso.',
@@ -431,11 +422,28 @@ class TurmaController extends Controller
             DB::rollBack();
 
             return redirect()
-                ->route('turma.index')
+                ->route('turma.alunos', $idTurma)
                 ->with('alerta', [
                     'tipo' => 'danger',
                     'mensagem' => 'Erro ao atualizar alunos.',
                 ]);
         }
+    }
+
+    public function atualizaNota(Request $request, AlunoCurso $id): RedirectResponse
+    {
+        $model = $id;
+
+        $alunoCurso = $model->update([
+            'nota' => $request['nota'],
+        ]);
+
+        if ($alunoCurso) {
+            return redirect()->back();
+        }
+
+        return redirect()
+            ->route('turma.index')
+            ->with('error', 'Não foi possível atualizar a nota do Aluno!!');
     }
 }

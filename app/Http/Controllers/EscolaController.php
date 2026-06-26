@@ -15,40 +15,23 @@ class EscolaController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request): View
-{
-    $query = Escola::query()->orderBy('nome_fantasia');
+    {
+        $codigo_escola = $request->query('codigo_escola');
+        $nome_fantasia = $request->query('nome_fantasia');
+        $razao_social = $request->query('razao_social');
+        $status = filled($request->query('status')) ? [$request->query('status')] : [0, 1];
 
-    $hasFilters = $request->filled('codigo_escola')
-        || $request->filled('nome_fantasia')
-        || $request->filled('razao_social')
-        || $request->filled('status');
+        $escolas = Escola::query()
+            ->whereLikeInsensitive('codigo_escola', $codigo_escola)
+            ->whereLikeInsensitive('nome_fantasia', $nome_fantasia)
+            ->whereLikeInsensitive('razao_social', $razao_social)
+            ->whereIn('status', $status)
+            ->paginate(5);
 
-    if ($request->filled('pesquisar') && $hasFilters) {
-        $query->whereLikeInsensitive('codigo_escola', $request->query('codigo_escola'))
-            ->whereLikeInsensitive('nome_fantasia', $request->query('nome_fantasia'))
-            ->whereLikeInsensitive('razao_social', $request->query('razao_social'))
-            ->when(
-                $request->filled('status'),
-                fn ($builder) => $builder->where('status', (int) $request->query('status'))
-            );
+        return view('escola.index', [
+            'escolas' => $escolas,
+        ]);
     }
-
-    $escolas = $query->paginate(5)->withQueryString();
-
-    $alerta = session('alerta');
-
-    if ($request->filled('pesquisar') && $hasFilters && $escolas->total() === 0) {
-        $alerta = [
-            'tipo' => 'warning',
-            'mensagem' => 'Escola não encontrada',
-        ];
-    }
-
-    return view('escola.index', [
-        'escolas' => $escolas,
-        'alerta' => $alerta,
-    ]);
-}
     /**
      * Show the form for creating a new resource.
      */

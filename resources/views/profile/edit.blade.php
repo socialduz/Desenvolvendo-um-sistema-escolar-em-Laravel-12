@@ -1,29 +1,34 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+<x-layout>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-between align-items-end border-bottom border-secondary py-3">
+                <h3 class="my-0"><span class="font-weight-bold">Perfil</span> - Meu Perfil</h3>
+                <a class="btn btn-primary" href="{{ route('dashboard') }}">Voltar</a>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+            <div class="col-12 col-lg-8 my-4">
+                <x-alert :alerta="$alerta ?? null" />
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        @include('profile.partials.update-profile-information-form')
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        @include('profile.partials.update-password-form')
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4 border-left-danger">
+                    <div class="card-body">
+                        @include('profile.partials.delete-user-form')
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+
+</x-layout>

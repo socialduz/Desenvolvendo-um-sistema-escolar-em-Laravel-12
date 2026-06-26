@@ -16,8 +16,21 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $alerta = match ($request->session()->get('status')) {
+            'profile-updated' => [
+                'tipo' => 'success',
+                'mensagem' => 'Perfil atualizado com sucesso.',
+            ],
+            'password-updated' => [
+                'tipo' => 'success',
+                'mensagem' => 'Senha alterada com sucesso.',
+            ],
+            default => session('alerta'),
+        };
+
         return view('profile.edit', [
             'user' => $request->user(),
+            'alerta' => $alerta,
         ]);
     }
 

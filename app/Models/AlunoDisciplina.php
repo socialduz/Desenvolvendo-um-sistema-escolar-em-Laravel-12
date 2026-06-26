@@ -8,9 +8,9 @@ class AlunoDisciplina extends Model
 {
     protected $table = 'aluno_disciplina';
 
+    public $timestamps = false;
 
-
-protected $fillable = [
+    protected $fillable = [
     'id_aluno',
     'id_disciplina',
     'status',

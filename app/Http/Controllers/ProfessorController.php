@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfessorRequest;
 use App\Models\Escola;
 use App\Models\Professor;
+use App\Models\Search\ProfessorSeach;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,39 +16,16 @@ class ProfessorController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Professor::query()
-            ->with(['usuario', 'escola'])
-            ->orderBy('id');
+        $escolas = Escola::query()->get();
+        $usuarios = User::query()->get();
 
-        $hasFilters = $request->filled('id_usuario')
-            || $request->filled('id_escola');
-
-        if ($request->filled('pesquisar') && $hasFilters) {
-            $query->when(
-                $request->filled('id_usuario'),
-                fn ($builder) => $builder->where('id_usuario', (int) $request->query('id_usuario'))
-            )->when(
-                $request->filled('id_escola'),
-                fn ($builder) => $builder->where('id_escola', (int) $request->query('id_escola'))
-            );
-        }
-
-        $professores = $query->paginate(5)->withQueryString();
-
-        $alerta = session('alerta');
-
-        if ($request->filled('pesquisar') && $hasFilters && $professores->total() === 0) {
-            $alerta = [
-                'tipo' => 'warning',
-                'mensagem' => 'Professor não encontrado',
-            ];
-        }
+        $modelSearchProfessor = new ProfessorSeach;
+        $professores = $modelSearchProfessor->search($request);
 
         return view('professor.index', [
             'professores' => $professores,
-            'usuarios' => User::query()->orderBy('name')->get(),
-            'escolas' => Escola::query()->orderBy('razao_social')->get(),
-            'alerta' => $alerta,
+            'escolas' => $escolas,
+            'usuarios' => $usuarios,
         ]);
     }
 

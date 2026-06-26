@@ -1,3 +1,5 @@
+@use('App\Models\Curso')
+
 <x-layout>
 
     <div class="container-fluid">
@@ -120,6 +122,72 @@
                                 disabled
                             >{{ $turma->observacao }}</textarea>
                         </div>
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <div class="col-12">
+                        <h4 class="font-weight-bold">Cursos vinculados / Alunos</h4>
+                    </div>
+
+                    <div class="col-12 my-2">
+                        @forelse ($cursosJaVinculados as $curso)
+                            <div class="card my-2">
+                                <div class="card-body">
+                                    <h5 class="my-2"><b>{{ $curso->nome }}</b> — {{ $curso->descricao }}</h5>
+
+                                    @php
+                                        $alunos = Curso::getAlunosByCurso($curso->id, $turma->id);
+                                    @endphp
+
+                                    <div class="table-responsive my-2">
+                                        <table class="table table-striped table-hover mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Aluno</th>
+                                                    <th>Nota</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse ($alunos as $aluno)
+                                                    <tr>
+                                                        <td>{{ $aluno->name }}</td>
+                                                        <td>
+                                                            @if (Curso::podeEditarCurso($turma->id))
+                                                                <form
+                                                                    action="{{ route('turma.atualiza-nota', ['id' => $aluno->id]) }}"
+                                                                    method="post"
+                                                                    class="d-inline-flex align-items-center"
+                                                                >
+                                                                    @csrf
+                                                                    @method('put')
+                                                                    <input
+                                                                        type="number"
+                                                                        name="nota"
+                                                                        value="{{ $aluno->nota }}"
+                                                                        class="form-control form-control-sm mr-2"
+                                                                        style="width: 5rem;"
+                                                                    >
+                                                                    <button type="submit" class="btn btn-sm btn-primary">Atualizar</button>
+                                                                </form>
+                                                            @else
+                                                                {{ strlen($aluno->nota) > 0 ? $aluno->nota : 'Não Atribuído' }}
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="2" class="text-muted">Nenhum aluno vinculado a este curso nesta turma.</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-muted mb-0">Nenhum curso vinculado a esta turma.</p>
+                        @endforelse
                     </div>
                 </div>
 

@@ -18,8 +18,6 @@ class TipoConteudo extends Model
 
     protected $guarded = [
         'id',
-        'dt_create',
-        'dt_update',
     ];
 
     public function scopeWhereLikeInsensitive($query, string $column, ?string $value)
@@ -46,12 +44,8 @@ class TipoConteudo extends Model
 
     public static function criarPorUsuario(array $dados): self
     {
-        $hoje = now()->toDateString();
-
         $registro = new static;
         $registro->fill(collect($dados)->only(['tipo', 'status'])->all());
-        $registro->dt_create = $hoje;
-        $registro->dt_update = $hoje;
         $registro->save();
 
         return $registro;
@@ -60,7 +54,6 @@ class TipoConteudo extends Model
     public function atualizarPorUsuario(array $dados): bool
     {
         $this->fill(collect($dados)->only(['tipo', 'status'])->all());
-        $this->dt_update = now()->toDateString();
 
         return $this->save();
     }
